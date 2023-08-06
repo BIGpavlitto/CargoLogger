@@ -1,4 +1,4 @@
-package models;
+package com.example.cargologger.models;
 
 import java.util.List;
 

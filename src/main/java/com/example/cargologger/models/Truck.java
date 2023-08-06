@@ -1,4 +1,4 @@
-package models;
+package com.example.cargologger.models;
 
 public class Truck {
     private int id;

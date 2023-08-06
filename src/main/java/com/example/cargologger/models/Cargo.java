@@ -1,4 +1,6 @@
-package models;
+package com.example.cargologger.models;
+
+import com.example.cargologger.models.enums.CargoType;
 
 public class Cargo {
     private int id;

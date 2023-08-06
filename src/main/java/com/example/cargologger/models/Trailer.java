@@ -1,4 +1,6 @@
-package models;
+package com.example.cargologger.models;
+
+import com.example.cargologger.models.enums.ConditionStatus;
 
 public class Trailer {
     private int id;
