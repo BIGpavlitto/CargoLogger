@@ -7,7 +7,9 @@ import com.example.cargologger.repositories.LoginRepository;
 import com.example.cargologger.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -24,11 +26,6 @@ public class LoginController {
         this.loginRepository = loginRepository;
     }
 
-    @ModelAttribute(name = "user")
-    public User user() {
-        return new User();
-    }
-
     @ModelAttribute
     public void addPreloadedHashedPasswords() {
 //        String pass_1 = PasswordHash.hashPassword("QntuyT");
@@ -43,19 +40,31 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String getUserData(@RequestParam("loginID") String loginID, @RequestParam("password") String password) {
-        Optional<LoginAuthentication> loginData = this.loginRepository.findByLoginId(loginID);
-        if (loginData.isPresent()) {
-            String hashedPassword = loginData.get().getPassword();
+    public String loginControl(Model model, @RequestParam("loginID") String loginID, @RequestParam("password") String password, RedirectAttributes redirectAttributes) {
+        Optional<LoginAuthentication> loginDataWrapper = this.loginRepository.findByLoginId(loginID);
+
+        if (loginDataWrapper.isPresent()) {
+            String hashedPassword = loginDataWrapper.get().getPassword();
             if (hashedPassword != null) {
                 if (PasswordHash.checkPassword(password, hashedPassword)) {
-                    User user = loginData.get().getUser();
+                    User user = loginDataWrapper.get().getUser();
                     if (user != null) {
+                        redirectAttributes.addFlashAttribute("user", user);
                         return "redirect:/main/current";
                     }
+                } else {
+                    model.addAttribute("errorMessage", "Wrong password. Try once more!");
+                    model.addAttribute("login", loginID);
+                    model.addAttribute("password", password);
+                    return "login";
                 }
             }
+        } else {
+            model.addAttribute("errorMessage", "User not found! Check userID!");
+            model.addAttribute("login", loginID);
+            model.addAttribute("password", password);
+            return "login";
         }
-        return "redirect:/registration";
+        return null;
     }
 }

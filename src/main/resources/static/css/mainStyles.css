@@ -1,0 +1,91 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    background-image: url('../imgs/backgroundImage2.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#popup {
+    display: none;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tasks {
+    height: 100px;
+    overflow: auto;
+}
+
+.search-box {
+    width: 400px;
+    background: #fff;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+input{
+    flex:1;
+    height: 30px;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: #333;
+}
+
+button{
+    background: transparent;
+    border: 0;
+    outline: 0;
+}
+
+button .fa-search{
+    width:25px;
+    color: #555;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.container1{
+    display: flex;
+    justify-content: center;
+}
+
+.moreInfo{
+    width: 200px;
+}
+
+#resultLeft{
+    width: 400px;
+    position: fixed;
+    list-style-type: none;
+    padding: 10px;
+    display: none;
+    z-index: 9999;
+    background-color: #ffffff;
+}
+
+#resultLeft li{
+    border-radius: 3px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#resultLeft li:hover{
+    background: #e9f3ff;
+}
+
+
