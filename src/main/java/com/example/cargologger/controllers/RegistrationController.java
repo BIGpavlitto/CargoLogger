@@ -1,35 +1,45 @@
 package com.example.cargologger.controllers;
 
+import com.example.cargologger.models.CredentialsGenerator;
 import com.example.cargologger.models.users.Driver;
 import com.example.cargologger.models.users.Employer;
 import com.example.cargologger.models.users.User;
+import com.example.cargologger.repositories.LoginRepository;
 import com.example.cargologger.repositories.UserRepository;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@SessionAttributes("user")
 @Controller
 public class RegistrationController {
-
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final LoginRepository loginRepository;
 
     @Autowired
-    public RegistrationController(UserRepository userRepository) {
+    public RegistrationController(UserRepository userRepository, LoginRepository loginRepository) {
         this.userRepository = userRepository;
+        this.loginRepository = loginRepository;
     }
 
     @GetMapping("/registration")
-    public String showRegistrationPage() {
+    public String showRegistrationPage(Model model) {
+        CredentialsGenerator credentialsGenerator = new CredentialsGenerator(loginRepository);
+        try {
+            String loginId = credentialsGenerator.generateLoginId();
+            String password = credentialsGenerator.generatePassword(10);
+            model.addAttribute("loginId", loginId);
+            model.addAttribute("password", password);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         return "registration";
     }
 
-
     @PostMapping("/registration")
-    public String getUserData(@ModelAttribute User user, @RequestParam("role") String role, RedirectAttributes redirectAttributes) {
+    public String getUserData(@ModelAttribute User user, @RequestParam("role") String role, HttpSession httpSession) {
         if (role.equals("manager")) {
             Employer employer = new Employer();
             employer.setName(user.getName());
@@ -37,6 +47,8 @@ public class RegistrationController {
             employer.setPhoneNumber(user.getPhoneNumber());
             employer.setEmail(user.getEmail());
             userRepository.save(employer);
+            httpSession.setAttribute("employer", employer);
+            return "redirect:/main/current_1";
         } else {
             Driver driver = new Driver();
             driver.setName(user.getName());
@@ -44,10 +56,8 @@ public class RegistrationController {
             driver.setPhoneNumber(user.getPhoneNumber());
             driver.setEmail(user.getEmail());
             userRepository.save(driver);
+            httpSession.setAttribute("driver", driver);
+            return "redirect:/main/current_2";
         }
-        redirectAttributes.addFlashAttribute("user", user);
-
-
-        return "mainPage_1";
     }
 }

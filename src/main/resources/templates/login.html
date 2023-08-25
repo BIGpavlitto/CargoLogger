@@ -5,7 +5,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/logoStyles.css">
+    <link rel="stylesheet" th:href="@{/css/logoStyles.css}">
 </head>
 <body>
 <div class="container">
@@ -15,7 +15,7 @@
                 <form class="card-body cardbody-color p-lg-5" id="myForm" action="/login" method="POST">
                     <h3 class="text-center text-dark mt-5">Welcome to GXO Logistics!</h3>
                     <hr>
-                    <h4 class="text-center mb-5 text-dark">Log into cargo logger!</h4>
+                    <h4 class="text-center mb-2 text-dark">Log into cargo tracker!</h4>
                     <div class="text-center">
                         <img src="../imgs/logoImage.jpg"
                              class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
@@ -61,7 +61,6 @@
         </div>
     </div>
 </div>
-</body>
 <script>
     function validateInput() {
         const login = document.getElementById('loginField').value;
@@ -96,4 +95,5 @@
         }
     }
 </script>
+</body>
 </html>

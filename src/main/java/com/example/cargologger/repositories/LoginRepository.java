@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface LoginRepository extends CrudRepository<LoginAuthentication, Long> {
     Optional<LoginAuthentication> findByLoginId(String id);
+    Optional<LoginAuthentication> findByUserId(Long id);
+    Optional<Boolean> existsByLoginId(String input);
 }

@@ -2,6 +2,7 @@ package com.example.cargologger.models;
 
 import com.example.cargologger.models.users.Employer;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Company {
     @Column(nullable = false)
     private String location;
     @Column(nullable = false)
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Employer> employers;
 }

@@ -2,28 +2,27 @@ package com.example.cargologger.controllers;
 
 import com.example.cargologger.models.LoginAuthentication;
 import com.example.cargologger.models.encryption.PasswordHash;
+import com.example.cargologger.models.users.Driver;
+import com.example.cargologger.models.users.Employer;
 import com.example.cargologger.models.users.User;
+import com.example.cargologger.repositories.DriverRepository;
 import com.example.cargologger.repositories.LoginRepository;
-import com.example.cargologger.repositories.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
-
-@SessionAttributes("user")
 @Controller
 public class LoginController {
-
-    private final UserRepository userRepository;
     private final LoginRepository loginRepository;
-
+    private final DriverRepository driverRepository;
     @Autowired
-    public LoginController(UserRepository userRepository, LoginRepository loginRepository) {
-        this.userRepository = userRepository;
+    public LoginController(LoginRepository loginRepository, DriverRepository driverRepository) {
         this.loginRepository = loginRepository;
+        this.driverRepository = driverRepository;
     }
 
     @ModelAttribute
@@ -40,7 +39,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginControl(Model model, @RequestParam("loginID") String loginID, @RequestParam("password") String password, RedirectAttributes redirectAttributes) {
+    public String loginControl(Model model, @RequestParam("loginID") String loginID, @RequestParam("password") String password, HttpSession session) {
         Optional<LoginAuthentication> loginDataWrapper = this.loginRepository.findByLoginId(loginID);
 
         if (loginDataWrapper.isPresent()) {
@@ -49,8 +48,15 @@ public class LoginController {
                 if (PasswordHash.checkPassword(password, hashedPassword)) {
                     User user = loginDataWrapper.get().getUser();
                     if (user != null) {
-                        redirectAttributes.addFlashAttribute("user", user);
-                        return "redirect:/main/current";
+                        if (user instanceof Employer) {
+                            Employer employer = (Employer) user;
+                            employer.setDrivers(driverRepository.findByEmployer_Id(user.getId()));
+                            session.setAttribute("employer", employer);
+                            return "redirect:/main/current_1";
+                        }else{
+                            session.setAttribute("driver", user);
+                            return "redirect:/main/current_2";
+                        }
                     }
                 } else {
                     model.addAttribute("errorMessage", "Wrong password. Try once more!");
